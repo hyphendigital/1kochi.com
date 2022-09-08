@@ -1,5 +1,5 @@
 
-# HTML TO React Conversion
+# Html To React Conversion
 
 
 
@@ -10,7 +10,7 @@
 
 # Tech Stack
 
-- HTML5
+- React
 - CSS3
 - Boostrap
 # Demo
@@ -23,13 +23,13 @@ https://paperhelpdeskclone.netlify.app/
 Clone the project
 
 ```bash
-  git clone https://github.com/SyedaMahamFahim/PaperHelpDeskHomePage.git
+  git clone https://github.com/SyedaMahamFahim/PaperHelpDesk-Html-To-React.git
 ```
 
 Go to the project directory
 
 ```bash
-  cd reacttodoapp
+  cd paperhelpdesk-html-to-react
 
 ```
 # Screenshots
