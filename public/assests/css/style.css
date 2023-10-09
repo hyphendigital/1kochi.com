@@ -1,3 +1,27 @@
+iframe.mfp-iframe {
+    background: #14181d;
+}
+
+.mfp-content {
+    background: transparent;
+}
+
+
+.mfp-content {
+    max-width: 1200px;
+    width: 100%;
+}
+
+iframe.mfp-iframe {
+    border-radius: 12px;
+}
+
+.mfp-content {
+    max-width: 1200px;
+    width: 100%;
+}
+
+
   .placeholder-container {
     position: relative;
   }
