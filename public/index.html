@@ -9,28 +9,147 @@
       name="description"
       content="Web site created using create-react-app"
     />
-    <title>Paper Help Desk</title>
-    <link rel="stylesheet" href="./assests/css/root.css">
+    <title>Welcome to 1Kochi.com | Powered and Engineered by Hyphen Digital Network</title>
     <link rel="stylesheet" href="./assests/css/style.css">
-    <link rel="stylesheet" href="./assests/css/services.css">
-    <link rel="stylesheet" href="./assests/css/sitepolices.css">
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-<!-- Font Family -->
-<link
-  href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap"
-  rel="stylesheet">
-<!-- Font Awesome Icons CDN -->
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
-  integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://storage.googleapis.com/feednami-static/js/feednami-client-v1.0.1.js" defer></script> 
+    <script>
+        $(document).ready(function() {
+            const categories = [
+                'Featured',
+                'Metros',
+                'Dubai',
+                'States',
+                'Launches',
+                'Chennai'
+            ];
+
+            categories.forEach(category => {
+                const containerID = `#Newsfeed-${category.replace(' ', '-').toLowerCase()}-container`;
+                const feedURL = `https://indiarealtimes.wordpress.com/category/${category.toLowerCase()}/feed?v22`;
+                loadRSS(feedURL, containerID, category);
+            });
+
+            document.querySelector(".preloader").style.display = "none";
+        });
+
+        function loadRSS(link, htmlContainer, category) {
+            var url = link;
+            var container = $(htmlContainer);
+
+            feednami.load(url, function(result) {
+                if (result.error) {
+                    console.log(result.error);
+                } else {
+                    var entries = result.feed.entries;
+                    for (var i = 0; i < 1; i++) {
+                        var entry = entries[i];
+                        var imageHTML = extractImageFromContent(entry.content || entry.description); // Attempt to extract images from content
+                        var excerpt = getExcerptWithoutImages(entry.description);
+                        var readMoreLink = '<a onclick="myFunction(); myFunction2()" href="' + entry.link + '">Full story →</a>';
+
+                        // Generate keywords from the entry content
+                        var keywords = encodeURIComponent(getKeywordsFromContent(entry));
+
+                        // Create the feed structure
+                        var articleHTML = '<article data-id="' + entry.title + '" class="clearfix placed analysis published">';
+                        articleHTML += '<figure>';
+                        articleHTML += '<a class="article-link" aria-label="" href="' + entry.link + '">';
+                        articleHTML += '<div class="placeholder-container" style="--aspect-ratio-percent:66.00790513833992%;--background-color:#4e322e">' + imageHTML + '</div>';
+                        articleHTML += '</a>';
+                        articleHTML += '</figure>';
+                        articleHTML += '<header>';
+                        articleHTML += '<div class="article--header">';
+                        articleHTML += '<h2><a href="' + entry.link + '">' + entry.title + '</a></h2>';
+                        articleHTML += '<p class="byline">';
+                        articleHTML += '<span><a href="' + getCategoryLink(category) + '">' + category + '</a></span>';
+                        articleHTML += '</p>';
+                        articleHTML += '</div>';
+                        articleHTML += '<div class="excerpt">' + excerpt + '</div>'; // Include the excerpt
+                        articleHTML += '<div class="read-more">' + readMoreLink + '</div>'; // Include the read more link
+                        articleHTML += '</header>';
+                        articleHTML += '</article>';
+
+                        container.append(articleHTML);
+                    }
+                }
+            });
+
+            function extractImageFromContent(content) {
+                // Regular expressions to match different image formats
+                var imgRegex = /<img[^>]*src="([^"]+)"[^>]*>/;
+                var aRegex = /<a[^>]*href="([^"]+)"[^>]*>\s*<img[^>]*src="([^"]+)"[^>]*>\s*<\/a>/;
+
+                // Try to match both <img> and <a> formats in the content
+                var imgMatch = imgRegex.exec(content);
+                var aMatch = aRegex.exec(content);
+
+                if (imgMatch && imgMatch.length > 1) {
+                    // Return the image HTML with lazy loading
+                    return '<img alt="" class="' + category.replace(' ', '-').toLowerCase() + '-img" src="' + imgMatch[1] + '" loading="lazy">';
+                } else if (aMatch && aMatch.length > 2) {
+                    // Return the image from the <a> format with lazy loading
+                    return '<a href="' + aMatch[1] + '" target="theshite"><img src="' + aMatch[2] + '" loading="lazy"></a>';
+                } else {
+                    // No image found in the content
+                    return null;
+                }
+            }
+
+            function getExcerptWithoutImages(description) {
+                // Remove images and HTML tables from the description
+                var sanitizedDescription = description.replace(/<img[^>]*>|<table[\s\S]*?<\/table>/gi, '');
+
+                // Extract an excerpt from the cleaned description or use a default excerpt if needed
+                // Modify this function to suit your excerpt extraction logic
+                // For example, you can truncate the cleaned description to a certain number of characters
+                var maxExcerptLength = 250; // Maximum length of the excerpt
+                if (sanitizedDescription.length > maxExcerptLength) {
+                    sanitizedDescription = sanitizedDescription.substring(0, maxExcerptLength) + '...'; // Truncate the cleaned description
+                }
+
+                return sanitizedDescription;
+            }
+
+            function getKeywordsFromContent(entry) {
+                // Extract keywords from the content of the entry
+                // Modify this function to suit your keyword extraction logic
+                // For example, you can extract keywords from the content text
+                var content = entry.content || entry.description;
+                var keywords = ''; // Initialize with an empty string
+
+                // Extract keywords from the content (example: split by spaces)
+                if (content) {
+                    var contentWords = content.split(' ');
+                    keywords = contentWords.join(',');
+                }
+
+                return keywords;
+            }
+
+            function getCategoryLink(category) {
+                // Define the link for each category
+                var categoryLinks = {
+                    'Featured': '<!CATEGORYNAME1LINK>',
+                    'Metros': '<!CATEGORYNAME2LINK>',
+                    'Dubai': '<!CATEGORYNAME3LINK>',
+                    'States': '<!CATEGORYNAME4LINK>',
+                    'Launches': '<!CATEGORYNAME5LINK>',
+                    'Chennai': '<!CATEGORYNAME6LINK>' // Add Chennai link
+                };
+
+                // Return the link for the specified category
+                return categoryLinks[category] || '#';
+            }
+        };
+    </script>
+
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+
     <div id="root"></div>
   
-    <!-- Bootstrap Js-->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
-  crossorigin="anonymous"></script>
+
   </body>
 </html>
